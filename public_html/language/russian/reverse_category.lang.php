@@ -1,0 +1,13 @@
+<?
+$reverse_category_lang[1]="";
+$reverse_category_lang[10]="";
+$reverse_category_lang[9]="";
+$reverse_category_lang[8]="";
+$reverse_category_lang[7]="";
+$reverse_category_lang[6]="";
+$reverse_category_lang[4]="";
+$reverse_category_lang[3]="";
+$reverse_category_lang[2]="";
+$reverse_category_lang[11]="";
+$reverse_category_lang[5]="тестовая";
+?>

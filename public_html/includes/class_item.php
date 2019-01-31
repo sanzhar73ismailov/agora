@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.11														##
 ##-------------------------------------------------------------##
-## Copyright ©2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright В©2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 ## uncomment the line #708 if you dont want to allow 				##
@@ -14,6 +14,8 @@ if ( !defined('INCLUDED') ) { die("Access Denied"); }
 $fileExtension = (file_exists('includes/global.php')) ? '' : '../';
 
 include_once($fileExtension.'includes/class_image.php');
+define('IS_COPY_RELIST_AUCTIONS','1'); //added by Sanzhar 160115
+
 
 class item extends custom_field
 {
@@ -709,11 +711,16 @@ class item extends custom_field
 
 	function shipping_methods_drop_down($box_name = 'type_service', $selected = null, $form_refresh = null)
 	{
+		
 		(string) $display_output = null;
+		
+		// Sanzhar 09.04.13 added ORDER BY id
+		//$sql_select_shipping = $this->query("SELECT id, name FROM
+		//	" . DB_PREFIX . "shipping_options ORDER");
 
 		$sql_select_shipping = $this->query("SELECT id, name FROM
-			" . DB_PREFIX . "shipping_options");
-
+			" . DB_PREFIX . "shipping_options ORDER BY id");
+		
 		$display_output = '<select name="' . $box_name . '" ' . (($form_refresh) ? 'onChange = "submit_form(' . $form_refresh . ', \'\')"' : '') . '> ';
 
 		while ($shipping_details = $this->fetch_array($sql_select_shipping))
@@ -2774,8 +2781,42 @@ class item extends custom_field
 					FROM " . DB_PREFIX . "auctions WHERE auction_id=" . $auction_id . " AND owner_id=" . $user_id);
 
 				$relist_id = $this->insert_id();
+				
+				
 
 				$relist_details = $this->get_sql_row("SELECT * FROM " . DB_PREFIX . "auctions WHERE auction_id=" . $relist_id);
+				
+			/*added by Sanzhar 160115 to check relisted auction from which auction added*/
+				
+					if(IS_COPY_RELIST_AUCTIONS){
+						
+						
+						$san_debug_backtrace = "";
+						try	{
+							$debug_array = debug_backtrace();
+							foreach ($debug_array as $sankey=>$sanvalue){
+									$san_debug_backtrace .= $sanvalue['file'] . ", ";
+									$san_debug_backtrace .= "line " .$sanvalue['line'] . ", " ;
+									$san_debug_backtrace .= "function " .$sanvalue['function']. "<br>\r\n";
+							}
+							unset($debug_array);
+						} catch(ErrorException $e) {
+							echo 'Выброшено исключение: ',  $e->getMessage(), "\n";
+						} catch(Exception $e) {
+							echo 'Выброшено исключение: ',  $e->getMessage(), "\n";
+						}
+						
+						//$san_debug_backtrace = "<pre>" . var_export(debug_backtrace(), true) . "</pre>";
+					    $copy_relist_query = sprintf("INSERT INTO relisted_auctions (user_id, auction_name, auction_new, auction_source, debug_info) VALUES ('%s','%s','%s','%s','%s')", 
+					    $user_id, $relist_details['name'],$relist_id, $auction_id,$san_debug_backtrace);
+					    $db = new database;
+						$db->query($copy_relist_query);
+				    }
+				
+		    	
+				
+			    
+		   	/* end by Sanzhar*/
 
 				$this->save_edit_vars($auction_id, 'auction');
 				//$this->update_page_data($relist_id, 'auction', $relist_details);
@@ -3545,7 +3586,7 @@ class item extends custom_field
 		
 		/*
 		$insurance_removed = false;
-		if (isset($_POST['frm_remove_insurance']) && session::value('user_id') == $user_id)
+		if (isset($_POST['frm_remove_insurance']) && $session->value('user_id') == $user_id)
 		{
 			$this->query("UPDATE " . DB_PREFIX . "winners SET insurance_included=0, insurance_amount=0 WHERE 
 				winner_id='" . intval($_REQUEST['winner_id']) . "' AND buyer_id='" . $user_id . "' AND 
@@ -3693,18 +3734,19 @@ class item extends custom_field
 	{
 		(string) $display_output = null;
 		$fee_table = 100; ## direct payment - multiple items;
+		$mysession = new session();
 				
 		if ($this->direct_payment_multiple($invoice_id, $items_array, $dp_array, $buyer_id)) 
 		{
 			$insurance_removed = false;
 			$insurance_added = false;
-			if (isset($_POST['frm_remove_insurance']) && session::value('user_id') == $buyer_id)
+			if (isset($_POST['frm_remove_insurance']) && $mysession->value('user_id') == $buyer_id)
 			{
 				$this->query("UPDATE " . DB_PREFIX . "winners SET insurance_included=0 WHERE 
 					invoice_id='" . $invoice_id . "' AND buyer_id='" . $buyer_id . "'");
 				$insurance_removed = true;
 			}		
-			else if (isset($_POST['frm_add_insurance']) && session::value('user_id') == $buyer_id)
+			else if (isset($_POST['frm_add_insurance']) && $mysession->value('user_id') == $buyer_id)
 			{
 				$this->query("UPDATE " . DB_PREFIX . "winners SET insurance_included=1 WHERE 
 					invoice_id='" . $invoice_id . "' AND buyer_id='" . $buyer_id . "'");

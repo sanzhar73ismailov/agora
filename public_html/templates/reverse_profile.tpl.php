@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.06															##
 ##-------------------------------------------------------------##
-## Copyright ©2009 PHP Pro Software LTD. All rights reserved.	##
+## Copyright ï¿½2009 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -41,7 +41,10 @@ if ( !defined('INCLUDED') ) { die("Access Denied"); }
 					<td width="100%"><img src="themes/<?=$setts['default_theme'];?>/img/pixel.gif" width="1" height="1"></td>
 				</tr>
 			   <tr>
-			      <td colspan="2"><?=database::add_special_chars($user_details['provider_profile']);?></td>
+			      <td colspan="2">
+			      <?php $mydatabase = new database(); ?>?>
+			      <?=$mydatabase->add_special_chars($user_details['provider_profile']);?>
+			      </td>
 			   </tr>   
 				<?=$custom_sections_table;?>
 			</table>
@@ -118,7 +121,7 @@ if ( !defined('INCLUDED') ) { die("Access Denied"); }
    </tr>
 </table>
 <br>
-<? //if (item::count_contents($user_details['ad_image'])) { ?>
+<? //if (item->count_contents($user_details['ad_image'])) { ?>
 <table width="100%" border="0" cellspacing="2" cellpadding="3" class="border">
    <tr>
       <td class="c3" colspan="2"><?=MSG_PORTFOLIO;?></td>

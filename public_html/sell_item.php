@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.11															##
 ##-------------------------------------------------------------##
-## Copyright �2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright �2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -19,11 +19,26 @@ include_once ('includes/class_item.php');
 include_once ('includes/functions_item.php');
 include_once ('includes/class_shop.php');
 
+
+$LOGGER = Logger::getLogger("sell_item.php", null, TO_LOG);
+$LOGGER->log("START sell_item.php LOGGING");
+
+$LOGGER->log("session->value('user_id')=" . $session->value('user_id'));
+//$LOGGER->log("\$user_details=" . $user_details);
+$LOGGER->log("!!!session->value('membersarea')=='Active'=" . ($session->value('membersarea')=='Active'));
+$LOGGER->log("\$session->value('is_seller')=" . ($session->value('is_seller')));
+//$LOGGER->log("\=" . "");
+//$LOGGER->log("\=" . "");
+//$LOGGER->log("\=" . "");
+//$LOGGER->log("\=" . "");
+//$LOGGER->log("\=" . "");
 (array) $user_details = null;
 if ($session->value('user_id'))
 {
 	$user_details = $db->get_sql_row("SELECT * FROM
 		" . DB_PREFIX . "users WHERE user_id=" . $session->value('user_id'));
+	//$LOGGER->log($user_details);
+	
 }
 
 if ($session->value('membersarea')!='Active')
@@ -99,9 +114,18 @@ else
 	 * values, and depending on the ad type and other settings as well
 	 */
 	$current_step_post = $_REQUEST['current_step'];
+	
+	$LOGGER->log("(\$setts['enable_seller_verification'] && \$setts['seller_verification_mandatory'] && !\$user_details['seller_verified'])=" 
+			. ($setts['enable_seller_verification'] && $setts['seller_verification_mandatory'] && !$user_details['seller_verified']));
+	$LOGGER->log("\$setts['enable_seller_verification']=" . ($setts['enable_seller_verification']));
+	$LOGGER->log("\$setts['seller_verification_mandatory']=" . ($setts['seller_verification_mandatory']));
+	$LOGGER->log("\$user_details['seller_verified']=" . ($user_details['seller_verified']));
+	
 	if ($setts['enable_seller_verification'] && $setts['seller_verification_mandatory'] && !$user_details['seller_verified'])
 	{
-		$current_step_post = null;
+		// мы здесь если enable_seller_verification и seller_verification_mandatory включены, 
+		// но пользователь ($user_details['seller_verified']) не верифицирован 
+		$current_step_post = null; 
 	}
 	else if ($setts['enable_store_only_mode'] && !$user_details['shop_active'] && $current_step_post != 'verification_checked')
 	{
@@ -217,10 +241,34 @@ else
 			 * - store only mode splash page
 			 * 	-> here we will not get a next step, just a "Enable Store" button
 			 */
-						
+			function show_format_date ($time) {
+				return date("d-m-Y H:i:s", $time);
+			}
+			
+			/*
+			 * хотели сделать бесплатно для новых пользователей - потом передумали
+			$daysFromRegWithoutPay = NUMBER_DAYS_FREE_AFTER_REGISTRATION; // количество дозволенных дней после регистрации, без оплаты
+			$is_user_must_start_pay = 1; // для пользователей, которые недавно зарегились, меньше периода в днях (см.  $daysFromRegWithoutPay)
+			$secsFromRegWithoutPay = $daysFromRegWithoutPay * (24 * 60 * 60); // количество дозволенных секунд после регистрации, без оплаты
+			$numSecFromReg = (CURRENT_TIME - $user_details["reg_date"]); // количество секунд прошло после регистрации
+			
+			$LOGGER->log("<<<<<<");
+			$LOGGER->log('NUMBER_DAYS_FREE_AFTER_REGISTRATION=' . NUMBER_DAYS_FREE_AFTER_REGISTRATION);
+			$LOGGER->log("\$user_details[\"reg_date\"]" . "(" .reg_date . ")" . show_format_date($user_details["reg_date"]));
+			$LOGGER->log("CURRENT_TIME" . "(" .CURRENT_TIME . ")" . show_format_date(CURRENT_TIME));
+			$LOGGER->log(sprintf("Дозволенный период без оплаты %s сек. или %s дней ", $secsFromRegWithoutPay, ($secsFromRegWithoutPay/ (24 * 60 * 60))));
+			$LOGGER->log(sprintf("Период после регистрации у пользователя %s сек. или %s дней ", $numSecFromReg, ($numSecFromReg/ (24 * 60 * 60))));
+			$is_user_must_start_pay = ($numSecFromReg > $secsFromRegWithoutPay) ? 1 : 0;
+			$LOGGER->log(sprintf("Прошла ли халява (1 - да)?  %s", $is_user_must_start_pay));
+			$LOGGER->log(">>>>>>");
+			// if ($is_user_must_start_pay && $setts['enable_seller_verification'] && !$user_details['seller_verified'] && $current_step_post != 'verification_checked')
+			*/
+			
 			if ($setts['enable_seller_verification'] && !$user_details['seller_verified'] && $current_step_post != 'verification_checked')
 			{				
 				$sale_step = 'splash_page_seller_verification';
+				$LOGGER->log("in if splash_page_seller_verification" . "");
+				
 			}		
 			else if ($setts['enable_store_only_mode'] && (!$user_details['shop_active'] || $shop_status['remaining_items'] <= 0)) 
 			{
@@ -860,11 +908,42 @@ else
 	}
 	else if ($sale_step == 'splash_page_seller_verification')
 	{
+		$LOGGER->log("if (\$sale_step == 'splash_page_seller_verification')" . "12345");
 		$template->set('sell_item_header', header7(strtoupper(MSG_SELLER_VERIFICATION)));
 
 		$template->set('current_step', '');
 
-		$sell_item_page_content = $template->process('splash_page_seller_verification.tpl.php');
+		
+		
+		$template->set('var123', 12345);
+		/**
+		 * важные поля из таблицы users
+		    seller_verified
+			seller_verif_last_payment
+			seller_verif_next_payment
+		* важные поля из таблицы fees
+			verification_fee	360.00
+			verification_recurring	5
+
+
+		 */
+		
+		$user_verif_details = $db->get_sql_row("SELECT f.verification_fee, f.verification_recurring, u.seller_verified,u.seller_verif_last_payment, u.seller_verif_next_payment FROM " . DB_PREFIX . "fees f, " . DB_PREFIX . "users u WHERE
+				u.user_id='" . $user_details["user_id"] . "' AND f.category_id=0");
+		$user_verif_details["currency"] = $setts["currency"];
+		$user_verif_details["sendto_email"] = $setts["admin_email"];
+		
+		$template->set('user_verif_details', $user_verif_details);
+		
+		
+		
+	
+		//$sell_item_page_content = $template->process('splash_page_seller_verification.tpl.php');
+		// перекидываем на свою страницу, где просто сколько и куда платить
+		$sell_item_page_content = $template->process('splash_sanzhar_page_seller_verification.tpl.php');
+		
+		
+		//print_r($user_details);
 		$template->set('sell_item_page_content', $sell_item_page_content);
 		
 	}

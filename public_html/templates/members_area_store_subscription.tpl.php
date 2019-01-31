@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.11															##
 ##-------------------------------------------------------------##
-## Copyright ©2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright ï¿½2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -102,7 +102,7 @@ if ( !defined('INCLUDED') ) { die("Access Denied"); }
 		<?=$list_store_subscriptions;?>      
       <? //} ?>
       
-		<? if (allow_store_upgrade(session::value('user_id'))) { ?>
+		<? if (allow_store_upgrade($session->value('user_id'))) { ?>
 	   <tr>
 	   	<td></td>
 	      <td><?=MSG_ALLOW_STORE_SUBSCRIPTION_EXPL;?></td>

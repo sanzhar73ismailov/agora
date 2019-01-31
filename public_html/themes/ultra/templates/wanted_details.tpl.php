@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.06															##
 ##-------------------------------------------------------------##
-## Copyright ©2009 PHP Pro Software LTD. All rights reserved.	##
+## Copyright ï¿½2009 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -29,16 +29,20 @@ function openPopup(url) {
    <input type="hidden" name="message_content" />
    <input type="hidden" name="question_id" />
 </form>
+<?php
+$myitem = new item;
+$mydatabase = new database;
+?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
    <tr valign="top">
       <td width="60%"><div class="itemid">
             <?=$item_details['name'];?>
          </div>
          <div class="itemidend"><?=MSG_WANTED_AD_ID;?>: <b><?=$item_details['wanted_ad_id'];?></b> &nbsp;&nbsp;|&nbsp;&nbsp;
-         	<b><?=MSG_STATUS;?></b>: <?=item::item_status($item_details['closed']); ?> &nbsp;&nbsp;|&nbsp;&nbsp;
+         	<b><?=MSG_STATUS;?></b>: <?=$myitem->item_status($item_details['closed']); ?> &nbsp;&nbsp;|&nbsp;&nbsp;
             <?=MSG_ITEM_VIEWED;?> <span class="redfont"><?=($item_details['nb_clicks']+1); ?> <?=GMSG_TIMES;?></span> 
 			</div>
-         <div><img src='themes/<?=$setts['default_theme'];?>"/img/pixel.gif' width='1' height='3'></div>
+         <div><img src='themes/<?=$setts['default_theme'];?>/img/pixel.gif' width='1' height='3'></div>
          <table width="100%" border="0" cellpadding="0" cellspacing="0">
             <tr>
                <? if ($ad_display == 'live') { ?>
@@ -122,7 +126,7 @@ function openPopup(url) {
                               </tr>
                               <tr>
                                  <td nowrap><b><?=MSG_STATUS;?></b>:</td>
-                                 <td><?=item::item_status($item_details['closed']); ?></td>
+                                 <td><?=$myitem->item_status($item_details['closed']); ?></td>
                               </tr>
                            </table></td>
                         <td width="30%"><table width="100%" border="0" cellspacing="1" cellpadding="3" class="border">
@@ -153,10 +157,10 @@ function openPopup(url) {
                         <td width="100%"><img src="themes/<?=$setts['default_theme'];?>/img/pixel.gif" width="1" height="1"></td>
                      </tr>
                      <tr>
-                        <td colspan="2"><?=database::add_special_chars($item_details['description']);?></td>
+                        <td colspan="2"><?=$mydatabase->add_special_chars($item_details['description']);?></td>
                      </tr>
                      <?=$custom_sections_table;?>
-                     <? if (item::count_contents($item_details['ad_image'])) { ?>
+                     <? if ($myitem->count_contents($item_details['ad_image'])) { ?>
                      <tr>
                         <td class="c3" colspan="2"><strong><?=MSG_WANTED_AD_IMAGES;?></strong> </td>
                      </tr>
@@ -180,7 +184,7 @@ function openPopup(url) {
                            </table></td>
                      </tr>
                      <? } ?>
-                     <? if (item::count_contents($item_details['ad_video'])) { ?>
+                     <? if ($myitem->count_contents($item_details['ad_video'])) { ?>
                      <tr>
                         <td class="c3" colspan="2"><strong><?=MSG_WANTED_AD_MEDIA;?></strong> </td>
                      </tr>

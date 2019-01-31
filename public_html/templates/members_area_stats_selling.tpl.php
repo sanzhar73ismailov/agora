@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.00															##
 ##-------------------------------------------------------------##
-## Copyright ©2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright ï¿½2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -11,7 +11,7 @@ if ( !defined('INCLUDED') ) { die("Access Denied"); }
 
 <table border="0" cellspacing="2" cellpadding="3" class="border">
    <tr>
-      <td colspan="6" class="sellingtitle"><b><?=MSG_SELLING_TOTALS;?></b></td>
+      <td colspan="7" class="sellingtitle"><b><?=MSG_SELLING_TOTALS;?></b></td>
    </tr>
    <tr class="c1">
       <td><?=MSG_MM_SOLD_ITEMS;?>: <b><?=$nb_sold_items;?></b></td>
@@ -20,5 +20,6 @@ if ( !defined('INCLUDED') ) { die("Access Denied"); }
       <td><?=MSG_MM_SCHEDULED;?>: <b><?=$nb_scheduled_items;?></b></td>
       <td><?=MSG_MM_CLOSED;?>: <b><?=$nb_closed_items;?></b></td>
       <td><?=MSG_MM_DRAFTS;?>: <b><?=$nb_drafts;?></b></td>
+      <td><?=MSG_MM_DUBLICATES;?>: <b><?=$nb_duplicates;?></b></td>
 	</tr>
 </table>

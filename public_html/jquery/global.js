@@ -114,7 +114,8 @@ function delete_media_async(box_id, media_type, auction_id) {
 		if (xmlHttp.readyState == 4)
 		{
 			var response = xmlHttp.responseText;
-			alert(response);
+			// alert(response); modified by Sanzhar 10.10.2013 по просьбе пользователей - теперь когда нажимаешь на чекбокс, чтобы удалить картинку
+			// сообщение о том, что оно успешно удалено не выходит
 
 			document.getElementById('box_'+box_id).innerHTML = '';
 			document.getElementById('box_'+box_id).className = 'thumbnail_display_empty';
@@ -190,6 +191,7 @@ function upload_media_async(form_name, media_type, file_path, file_url, file_emb
 
             if (results[5] != '')
 				{
+					
 					alert (results[5]);
 				}
 				else
@@ -246,6 +248,8 @@ function upload_media_async(form_name, media_type, file_path, file_url, file_emb
 				if (results[5] != '')
 				{
 					thumbnail_div.removeChild(image_loading);
+					console.log('here '); //
+					console.log(results); //
 					alert (results[5]);
 					setTimeout(jQuery.unblockUI, 500);
 				}

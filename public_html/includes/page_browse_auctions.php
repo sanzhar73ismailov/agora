@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.11															##
 ##-------------------------------------------------------------##
-## Copyright ©2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright ï¿½2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -20,7 +20,21 @@ $src_details = array_merge($_GET, $_POST);
 $src_details = $db->rem_special_chars_array($src_details);
 $src_details['keywords_search'] = (!empty($src_details['basic_search'])) ? $src_details['basic_search'] : $src_details['keywords_search'];
 
+
+if(!$src_details['limit']){
+	if ($session->value('user_id'))
+	{
+		$row_user = $db->get_sql_row("SELECT items_per_page FROM
+						" . DB_PREFIX . "users WHERE user_id=" . $session->value('user_id'));
+		$src_details['limit'] = $row_user['items_per_page'];
+	 }
+}
+
+
+
 $src_details['limit'] = set_browse_limit($src_details['limit']);
+
+
 $src_details['item_type'] = set_item_type($src_details['item_type']);
 
 $template->set('src_details', $src_details);
@@ -147,7 +161,8 @@ else
 
       if (empty($force_index))
       {
-         $force_index = item::force_index($order_field);
+      	$myitem = new $item();
+        $force_index = $myitem->force_index($order_field);
       }
 
       $order_field = ($order_field == 'current_price') ? 'IF(a.max_bid > a.start_price, a.max_bid, IF(a.auction_type=\'first_bidder\', a.fb_current_bid, a.start_price))' : $order_field;	

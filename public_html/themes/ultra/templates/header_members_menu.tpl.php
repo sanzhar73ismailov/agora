@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.10															##
 ##-------------------------------------------------------------##
-## Copyright ©2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright ï¿½2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -96,6 +96,7 @@ $cw = ($is_seller) ? '20%' : '25%';
                   <br>&raquo; <a href="<?=process_link('members_area', array('page' => 'selling', 'section' => 'postage_setup'));?>"><?=MSG_MM_POSTAGE_CALC_SETUP;?></a>
                   <? } ?>
                   <br>&raquo; <a href="<?=process_link('members_area', array('page' => 'selling', 'section' => 'vouchers'));?>"><?=MSG_MM_SELLER_VOUCHERS;?></a>
+                  <br>&raquo; <a href="<?=process_link('members_area', array('page' => 'selling', 'section' => 'open', 'duplicates' => '1'));?>"><?=MSG_MM_POSSIBLE_DUBLICATE_AUCTIONS;?></a> 
                </td>
             </tr>
          </table></td>

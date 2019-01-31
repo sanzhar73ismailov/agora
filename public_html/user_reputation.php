@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.07															##
 ##-------------------------------------------------------------##
-## Copyright ©2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright ï¿½2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -35,8 +35,8 @@ $user_details = $db->get_sql_row("SELECT user_id, username, shop_account_id, sho
 	default_insurance_amount, default_type_service, default_shipping_details, default_payment_methods,
 	default_public_questions, enable_private_reputation FROM
 	" . DB_PREFIX . "users WHERE user_id=" . $user_id);
-
-if (item::count_contents($user_details))
+$myitem = new item();
+if ($myitem->count_contents($user_details))
 {
 	$reputation = new reputation();
 	$reputation->setts = &$setts;

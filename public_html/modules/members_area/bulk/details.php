@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.10															##
 ##-------------------------------------------------------------##
-## Copyright ©2010 PHP Pro Software LTD. All rights reserved.	##
+## Copyright ï¿½2010 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -298,10 +298,10 @@ class Module_Members_Bulk_Details
 		{
 			$row = $this->db->rem_special_chars_array($row);
 			$row = $this->db->array_add_quotes($row);
-			
+			$mysession = new session();
 			$query = "INSERT INTO " . DB_PREFIX . "bulk_listings 
 				(" . $this->db->implode_array($this->column_names) . ", owner_id, import_date) VALUES 
-				(" . $this->db->implode_array($row) . ", '" . session::value('user_id') . "', '" . CURRENT_TIME . "')";
+				(" . $this->db->implode_array($row) . ", '" . $mysession->value('user_id') . "', '" . CURRENT_TIME . "')";
 			
 			$this->db->query($query);
 		}
@@ -311,7 +311,8 @@ class Module_Members_Bulk_Details
 	
 	function removeRows($ids, $all = false)
 	{
-		$owner_id = session::value('user_id');
+		$mysession = new session();
+		$owner_id = $mysession->value('user_id');
 		
 		$where = null;
 		if (!$all)
@@ -328,7 +329,8 @@ class Module_Members_Bulk_Details
 	
 	function resetBulkFlag($ids, $all = false)
 	{
-		$owner_id = session::value('user_id');
+		$mysession = new session();
+		$owner_id = $mysession->value('user_id');
 		
 		$where = null;
 		if (!$all)
@@ -438,8 +440,9 @@ class Module_Members_Bulk_Details
 	
 	function createListings($ids, $all = false)
 	{
-		$owner_id = session::value('user_id');
-
+		$mysession = new session();
+		$owner_id = $mysession->value('user_id');
+		
 		$user_details = $this->db->get_sql_row("SELECT * FROM " . DB_PREFIX . "users WHERE user_id='" . $owner_id . "'");
 		
 		

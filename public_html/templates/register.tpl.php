@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.11															##
 ##-------------------------------------------------------------##
-## Copyright �2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright �2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -103,6 +103,7 @@ if ( !defined('INCLUDED') ) { die("Access Denied"); }
    <input type="hidden" name="user_id" value="<?=$user_details['user_id'];?>">
    <input type="hidden" name="edit_refresh" value="0">
   	<input type="hidden" name="generated_pin" value="<?=$generated_pin;?>">
+  	<input type="hidden" name="capcode" id="capcode" value="false" />
    <table width="100%" border="0" cellpadding="3" cellspacing="2" class="border">
       <tr>
          <td colspan="2" class="c3"><?=MSG_MAIN_DETAILS;?></td>
@@ -381,9 +382,19 @@ if ( !defined('INCLUDED') ) { die("Access Denied"); }
    <?=$signup_voucher_box;?>
    <?=$registration_terms_box;?>
    <br />
+   <?php 
+   if (!class_exists('KeyCAPTCHA_CLASS')) {
+	// измените путь '/home/path_to_keycaptcha_file/' на реальный путь к keycaptcha.php
+	include('includes/keycaptcha.php');
+   }
+   $kc_o = new KeyCAPTCHA_CLASS();
+  echo $kc_o->render_js();
+  
+  ?>
+  <br />
    <table width="100%" border="0" cellpadding="3" cellspacing="2" class="border">
       <tr>
-         <td width="150" class="contentfont"><input name="form_register_proceed" type="submit" id="form_register_proceed" value="<?=$proceed_button;?>" />
+         <td width="150" class="contentfont"><input id="postbut" name="form_register_proceed" type="submit" id="form_register_proceed" value="<?=$proceed_button;?>" />
          </td>
          <td class="contentfont">&nbsp;</td>
       </tr>

@@ -2,10 +2,20 @@
 #################################################################
 ## PHP Pro Bid v6.10 														##
 ##-------------------------------------------------------------##
-## Copyright �2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright ©2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
-
+// added by Sanzhar 07.05.2013
+function replaceMonthByRus($str){
+	$monthesRusNames = array('Jan.'=>'января', 'Feb.'=>'февраля', 'Mar.'=>'марта', 'Apr.'=>'апреля', 'May.'=>'мая', 'Jun.'=>'июня', 'Jul.'=>'июля', 'Aug.'=>'августа', 'Sep.'=>'сентября', 'Oct.'=>'октября', 'Nov.'=>'ноября', 'Dec.'=>'декабря');
+	foreach ($monthesRusNames as $key => $value){
+		if (preg_match("/" . $key . "/i", $str)) {
+		   // echo "Вхождение найдено.";
+		   $str = str_replace($key, $value, $str);
+		   return $str;
+		}
+	}
+}
 function show_date ($timestamp, $show_time = true)
 {
 	(string) $display_output = null;
@@ -17,6 +27,8 @@ function show_date ($timestamp, $show_time = true)
 		$offset_time = $timestamp + (TIME_OFFSET * 60 * 60);
 
 		$display_output = date($date_format, $offset_time);
+		
+		$display_output = replaceMonthByRus($display_output); // added by Sanzhar 08.05.2013
 	}
 	else
 	{
@@ -73,7 +85,7 @@ function time_left($end_date, $start_date = CURRENT_TIME, $show_close_date = fal
 			$display_output .= '<br><b>' . MSG_ON . '</b> ' . show_date($end_date);
 		}
 	}
-
+    $display_output = replaceMonthByRus($display_output); // added by Sanzhar 08.05.2013
 	return $display_output;
 }
 
@@ -84,7 +96,7 @@ function date_form_field($current_timestamp = 0, $box_number = 1, $form_name = n
 	(string) $display_output = null;
 	(array) $current_date = null;
 
-	$years_array = array('2010', '2011', '2012', '2013', '2014', '2015');
+	$years_array = array('2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025');
 
 	$months_array = array('01' => GMSG_MTH_JANUARY, '02' => GMSG_MTH_FEBRUARY, '03' => GMSG_MTH_MARCH, '04' => GMSG_MTH_APRIL,
 		'05' => GMSG_MTH_MAY, '06' => GMSG_MTH_JUNE, '07' => GMSG_MTH_JULY, '08' => GMSG_MTH_AUGUST,

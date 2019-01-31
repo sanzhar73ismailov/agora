@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.10															##
 ##-------------------------------------------------------------##
-## Copyright �2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright �2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -17,6 +17,9 @@ include_once ('../includes/class_custom_field.php');
 include_once ('../includes/class_item.php');
 include_once ('../includes/class_user.php');
 include_once ('../includes/functions_login.php');
+
+$LOGGER = Logger::getLogger("list_site_users.php", null, TO_LOG);
+$LOGGER->log("START list_site_users.php LOGGING");
 
 if ($session->value('adminarea')!='Active')
 {
@@ -311,11 +314,42 @@ else
 	}
 	else if ($_REQUEST['do'] == 'verify_seller')
 	{
+		//todo san
 		$template->set('msg_changes_saved', $msg_changes_saved);
 		
 		$db->query("UPDATE " . DB_PREFIX . "users SET
 			seller_verified='" . $value . "', seller_verif_next_payment=0 WHERE
 			user_id=" . $user_id);
+	}
+	//verify_seller_check_payment
+	else if ($_REQUEST['do'] == 'verify_seller_check_payment')
+	{
+		//todo san
+		$template->set('msg_changes_saved', $msg_changes_saved);
+		
+		/*
+		 $db->query("UPDATE " . DB_PREFIX . "users SET
+		 		seller_verified='" . $value . "', seller_verif_next_payment=0 WHERE
+		 		user_id=" . $user_id);
+		*/
+		$user_verif_details = $db->get_sql_row("SELECT f.verification_fee, f.verification_recurring, u.seller_verified,u.seller_verif_last_payment, u.seller_verif_next_payment FROM " . DB_PREFIX . "fees f, " . DB_PREFIX . "users u WHERE
+				u.user_id='" . $user_id . "' AND f.category_id=0");
+		$user_verif_details["currency"] = $setts["currency"];
+
+		//echo "<h1>";
+		//print_r($user_verif_details);
+		//echo "</h1>";
+		
+		$fee_table=6;
+		$active_pg = 'AgoraCustom';
+		$payment_gross=$user_verif_details["verification_fee"];
+		$txn_id=$user_id . "TBL6";
+		$payment_currency=$setts["currency"];
+		include_once ('../includes/class_fees.php');
+		$process_fee = new fees();
+		$process_fee->setts = &$setts;
+		$process_fee->callback_process($user_id, $fee_table, $active_pg, $payment_gross, $txn_id, $payment_currency);
+		
 	}
 	else if ($_REQUEST['do'] == 'verify_bidder')
 	{
@@ -563,6 +597,7 @@ else
       	'	</td> ' .
 			'	<td valign="top">' . GMSG_ACCOUNT_STATUS . ': <b>' . $user->account_status($user_details['active'], $user_details['approved']) . '</b>';
 
+		
       // get user payment mode.
      	$user_payment_mode_display = $user->payment_mode_desc($user_details['payment_mode']);
      	$user_payment_mode = $tax->user_payment_mode($user_details['user_id']);
@@ -607,10 +642,48 @@ else
 			$site_users_content .= '<br>' . AMSG_SELLING_CAPABILITIES .': <b>' . field_display($user_details['is_seller'], $can_sell_enable_link, $can_sell_disable_link) . '</b>';
 		}
 
-		$verified_seller_enable_link = GMSG_NO . ' [ <a href="list_site_users.php?do=verify_seller&user_id=' . $user_details['user_id'] . $additional_vars . $order_link . $limit_link . $show_link . '&value=1">' . GMSG_VERIFY . '</a> ]';
-		$verified_seller_disable_link = GMSG_YES . ' [ <a href="list_site_users.php?do=verify_seller&user_id=' . $user_details['user_id'] . $additional_vars . $order_link . $limit_link . $show_link . '&value=0">' . GMSG_UNVERIFY . '</a> ]';
+		/*
+		 * добавил  style="color:black; pointer-events: none; cursor: default;", чтобы админ не мог по ошибки верифицировать, нужно  использовать $verified_seller_set_payment_button
+		 */
+		$verified_seller_enable_link = GMSG_NO . ' [ <a style="color:black; pointer-events: none; cursor: default;" href="list_site_users.php?do=verify_seller&user_id=' . $user_details['user_id'] . $additional_vars . $order_link . $limit_link . $show_link . '&value=1">' . GMSG_VERIFY . '</a> ]';
+		$verified_seller_disable_link = GMSG_YES . ' [ <a style="color:black; pointer-events: none; cursor: default;" href="list_site_users.php?do=verify_seller&user_id=' . $user_details['user_id'] . $additional_vars . $order_link . $limit_link . $show_link . '&value=0">' . GMSG_UNVERIFY . '</a> ]';
+		
+		
+		
 		$site_users_content .= '<br>' . AMSG_VERIFIED_SELLER .': <b>' . field_display($user_details['seller_verified'], $verified_seller_enable_link, $verified_seller_disable_link) . '</b>';
+		
+		// sanzhar work
 
+		
+		// узнает детали по оплате
+		//$LOGGER->log('$user_details[user_id]=' . $user_details['user_id']);
+		$user_verif_details = $db->get_sql_row("SELECT f.verification_fee, f.verification_recurring, u.seller_verified,u.seller_verif_last_payment, u.seller_verif_next_payment, u.username FROM " . DB_PREFIX . "fees f, " . DB_PREFIX . "users u WHERE
+				u.user_id='" . $user_details['user_id'] . "' AND f.category_id=0");
+		$date_last_payment = " - ";
+		$date_nex_payment = " - ";
+		$LOGGER->log('$user_verif_details["seller_verif_last_payment"]=' . $user_verif_details["seller_verif_last_payment"]);
+		$mark_color_if_verified = "";
+		$sell_veririd_but_id = "sell_veririd_but_id" .  $user_details['user_id'];
+		if($user_verif_details["seller_verif_last_payment"] > 0){
+			$date_last_payment = date("d-m-Y H:i:s", $user_verif_details["seller_verif_last_payment"]);
+			$date_nex_payment = date("d-m-Y H:i:s", $user_verif_details["seller_verif_next_payment"]);
+			$date_nex_payment .= sprintf("<br/>Хочу добавить оплату <input type='checkbox' value='%s' onclick='show_button_sel_verif(this);'>", $sell_veririd_but_id);
+		}
+		$display_sel_ver_button = "display: ;";
+		if($user_verif_details["seller_verified"]){
+			$mark_color_if_verified = "pink";
+			$display_sel_ver_button = "display: none;";
+		}
+		
+		// do присваивается "verify_seller_check_payment" - см вверху действие
+		$confirmVerified = sprintf("return confirmVerified('%s');", $user_verif_details['username']);
+		$verified_seller_set_payment_button = '<a onclick="'.$confirmVerified.'" id="' . $sell_veririd_but_id . '" style="'. $display_sel_ver_button .'" href="list_site_users.php?do=verify_seller_check_payment&user_id=' . $user_details['user_id'] . $additional_vars . $order_link . $limit_link . $show_link . '&value=1">';
+		$verified_seller_set_payment_button .= '<button  style="background-color: #4CAF50;">Оплатил</button></a>';
+		$site_users_content .= " $verified_seller_set_payment_button";
+		$site_users_content .= "<div style='width:300px; background-color: " . $mark_color_if_verified . "'>";
+		$site_users_content .= "<br><b>Date of last payment</b>: " . $date_last_payment . "";
+		$site_users_content .= "<br><b>Date of next payment</b>: " . $date_nex_payment . "";
+		$site_users_content .= "</div>";
 		if ($setts['enable_pref_sellers'])
 		{
 			$pref_seller_enable_link = GMSG_NO . ' [ <a href="list_site_users.php?do=preferred_seller&user_id=' . $user_details['user_id'] . $additional_vars . $order_link . $limit_link . $show_link . '&value=1">' . GMSG_ENABLE . '</a> ]';

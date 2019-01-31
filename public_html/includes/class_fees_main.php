@@ -33,7 +33,7 @@ class fees_main extends voucher
 			$currency = ($currency) ? $currency : $this->setts['currency'];
 	
 			$currency_symbol = $this->get_sql_field("SELECT currency_symbol FROM " . DB_PREFIX . "currencies WHERE symbol='" . $currency . "'", 'currency_symbol');
-			
+			$currency_symbol .= ' '; // Added by Sanzhar 13.05.2013 to add space after KZT
 			$currency = (!empty($currency_symbol)) ? $this->add_special_chars($currency_symbol) : $currency;
 			$spacing = (!empty($currency_symbol)) ? '' : ' ';
 			

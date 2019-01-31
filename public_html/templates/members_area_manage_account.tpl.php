@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.07															##
 ##-------------------------------------------------------------##
-## Copyright ©2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright ï¿½2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -218,7 +218,23 @@ function submit_form(form_name) {
 		<tr> 
 			<td></td> 
 			<td class="c1"><?=MSG_PAYPAL_PHONE_C_EXPL;?></td> 
-		</tr> 					
+		</tr> 	
+		<tr class="c1"> 
+			<td><?=MSG_ITEMS_PER_PAGE_BY_DEFAULT;?></td> 
+			<td>
+			<select name="items_per_page_select">
+				<option value="10" <?= $user_details['items_per_page']==10? 'selected': ''  ;?>>10</option>
+				<option value="25" <?= $user_details['items_per_page']==25? 'selected': ''  ;?>>25</option>
+				<option value="50" <?= $user_details['items_per_page']==50? 'selected': ''  ;?>>50</option>
+				<option value="200" <?= $user_details['items_per_page']==200? 'selected': ''  ;?>>200</option>
+			</select>
+         </td> 
+		</tr> 
+		<tr> 
+			<td></td> 
+			<td class="c1"><?=MSG_PAYPAL_PHONE_C_EXPL;?></td> 
+		</tr> 
+						
    </table>
    <br>
    <table width="100%" border="0" cellpadding="3" cellspacing="2" class="border">

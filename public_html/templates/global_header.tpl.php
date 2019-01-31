@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.11														##
 ##-------------------------------------------------------------##
-## Copyright ©2010 PHP Pro Software LTD. All rights reserved.	##
+## Copyright ï¿½2010 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -56,8 +56,9 @@ if ( !defined('INCLUDED') ) { die("Access Denied"); }
 	var location_reload = true;
 	<? } else { ?>
 	var location_reload = false;
-	<? } ?>	
-	var s_usr = '<?=intval(session::value('user_id')); ?>';
+	<? } ?>
+   <? $mysession = new session(); ?>	
+	var s_usr = '<?=intval($mysession->value('user_id')); ?>';
 	
 
 	function confirm_refresh()
@@ -115,7 +116,8 @@ if ( !defined('INCLUDED') ) { die("Access Denied"); }
 			theme : "advanced",
          relative_urls: false,
          remove_script_host: false,
-         
+         valid_children : "+body[style]", // Added by Sanzhar 190413
+		 
 			// Theme options
 			theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,formatselect,fontselect,fontsizeselect",
 			theme_advanced_buttons2 : "cut,copy,paste,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,image,cleanup,help,code,|,forecolor,backcolor,|,hr,removeformat,visualaid,|,sub,sup",
@@ -147,7 +149,7 @@ if ( !defined('INCLUDED') ) { die("Access Denied"); }
 				$('#time_left').countdown({ 
 					until: response, 
 					serverSync: serverTime, 
-					layout:'{d<}{dn} {dl},{d>} ' + '{hn}<?=GMSG_H;?> {mn}<?=GMSG_M;?> {sn}<?=GMSG_S;?>'
+					layout:'{dn} <?=GMSG_DAYS;?> ' + '{hn}<?=GMSG_H;?> {mn}<?=GMSG_M;?> {sn}<?=GMSG_S;?>' //modificated by Sanzhar 08.05.2013
 				});
 				
 				setTimeout(function() {calcEndTime()}, 20000);

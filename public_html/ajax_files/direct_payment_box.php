@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.10															##
 ##-------------------------------------------------------------##
-## Copyright ©2010 PHP Pro Software LTD. All rights reserved.	##
+## Copyright ï¿½2010 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -18,7 +18,7 @@ $user_details = array();
 
 $gateway_settings = payment_gateways_array($user_details);
 
-if ($session->value('adminarea') == 'Active' || $user_id == session::value('user_id'))
+if ($session->value('adminarea') == 'Active' || $user_id == $session->value('user_id'))
 {
 	$dp_array =	$gateway_settings[$_REQUEST['id']];
 	

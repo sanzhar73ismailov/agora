@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.11															##
 ##-------------------------------------------------------------##
-## Copyright ©2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright ï¿½2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -38,6 +38,7 @@ function checkAll(field, array_len, check) {
 <table width="100%" border="0" cellpadding="3" cellspacing="2" class="border">
 	<form action="" method="post" name="closed_auctions">
 	<input type="hidden" name="do" value="closed_proceed">
+	<?=$inpSessId;?>
 	<tr>
       <td colspan="6" class="c7"><b><?=MSG_MM_CLOSED_AUCTIONS;?></b> (<?=$nb_items;?> <?=MSG_ITEMS;?>)</td>
 		<td colspan="2" align="center" nowrap class="c7 contentfont"><b><?=GMSG_SHOW;?></b>: <?=$filter_items_content;?></td>
@@ -73,7 +74,9 @@ function checkAll(field, array_len, check) {
    <tr class="membmenu">
       <td colspan="8" align="center" class="contentfont"><input type="submit" name="form_closed_proceed" value="<?=GMSG_PROCEED;?>" <?=$disabled_button;?> onclick="return confirm('<?=MSG_PROCEED_CONFIRM;?>');" /></td>
    </tr>
-
+   <tr>
+      <td colspan="8" align="right" class="contentfont"><?=$items_per_page;?></td>
+   </tr>
    <tr>
       <td colspan="8" align="center" class="contentfont"><?=$pagination;?></td>
    </tr>

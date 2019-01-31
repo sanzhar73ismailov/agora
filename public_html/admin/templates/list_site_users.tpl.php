@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.04															##
 ##-------------------------------------------------------------##
-## Copyright �2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright �2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -13,6 +13,17 @@ function popUp(URL) {
 day = new Date();
 id = day.getTime();
 eval("page" + id + " = window.open(URL, '" + id + "', 'toolbar=0,scrollbars=2,location=0,statusbar=1,menubar=0,resizable=0,width=750,height=525,left = 100,top = 134');");
+}
+
+function show_button_sel_verif(obj){
+  var hrefElem =  document.getElementById(obj.value);
+  hrefElem.style.display = "";
+}
+
+function confirmVerified(username){
+	var question = "Верифицировать пользователя " + username +"?";
+	var result = confirm(question);
+	 return result;
 }
 </script>
 

@@ -30,7 +30,7 @@ function checkAll(field, array_len, check) {
       </td>
    </tr>
    <tr>
-      <td class="membmenu" nowrap><?=MSG_TO;?> <?=$page_order_receiver_username;?></td>
+      <td class="membmenu" nowrap><?=MSG_TO_PERSON;?> <?=$page_order_receiver_username;?></td>
       <td class="membmenu"><?=MSG_SUBJECT;?></td>
       <td class="membmenu" align="center" nowrap><?=GMSG_DATE;?> <?=$page_order_reg_date;?></td>
       <td class="membmenu contentfont" align="center" nowrap><input type="submit" name="form_delete_messages" value="<?=GMSG_DELETE;?>" <? echo ($nb_messages) ? '' : 'disabled';?> />

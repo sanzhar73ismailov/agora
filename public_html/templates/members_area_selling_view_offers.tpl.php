@@ -88,7 +88,7 @@ div > div#centered_div { position: fixed; }
          </b></td>
    </tr>
    <tr>
-      <td colspan="2" class="c4"<img src="themes/<?=$setts['default_theme'];?>/img/pixel.gif" width="1" height="1"></td>
+      <td colspan="2" class="c4"><img src="themes/<?=$setts['default_theme'];?>/img/pixel.gif" width="1" height="1"></td>
    </tr>
    <? if ($item_details['auction_type']=='dutch') { ?>
    <tr class="c1">

@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.10															##
 ##-------------------------------------------------------------##
-## Copyright ©2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright ï¿½2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -17,6 +17,9 @@ include_once ('includes/class_user.php');
 include_once ('includes/class_fees.php');
 include_once ('includes/class_item.php');
 
+$LOGGER = Logger::getLogger("fee_payment.php", null, TO_LOG);
+$LOGGER->log("START fee_payment.php LOGGING");
+
 if (!$session->value('user_id'))
 {
 	header_redirect('login.php');
@@ -30,6 +33,7 @@ else
 	$template->set('members_area_header', header7(MSG_MEMBERS_AREA_TITLE));
 
 	$user_details = $db->get_sql_row("SELECT * FROM " . DB_PREFIX . "users WHERE user_id='" . $session->value('user_id') . "'");
+	$LOGGER->log("\$_REQUEST['do']=" . $_REQUEST['do']);
 
 	if ($_REQUEST['do'] == 'clear_balance')
 	{
@@ -202,6 +206,14 @@ else
 		$fee_output = $verification_fee->seller_verification($session->value('user_id'));
 
 		$template->set('payment_table_display', $fee_output['display']);
+		
+		$LOGGER->log("\$fee_type_message=" . $fee_type_message);
+		$LOGGER->log("\verification_fee->setts:");
+		//$LOGGER->log($verification_fee->setts);
+		//$LOGGER->log("\$user_details=" . $user_details);
+		$LOGGER->log("\fee_output:");
+		$LOGGER->log($fee_output);
+		
 	}
 	else if ($_REQUEST['do'] == 'bidder_verification')
 	{

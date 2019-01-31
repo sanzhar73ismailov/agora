@@ -23,6 +23,8 @@ class reputation extends item
 
 	function save($variables_array, $user_id)
 	{
+		global $setts;
+		
 		$variables_array = $this->rem_special_chars_array($variables_array);
 
 		$reputation_id_array = @explode(',', $variables_array['reputation_ids']);
@@ -40,6 +42,7 @@ class reputation extends item
 			
 			$page_handle = $this->cf_page_handle($reputation_details);
 			$this->update_page_data($reputation_id, $page_handle, $variables_array);
+			include($parent_dir . 'language/' . $setts['site_lang'] . '/mails/agora_reputation_user_notification.php'); // Added by Sanzhar 280413
 		}
 	}
 

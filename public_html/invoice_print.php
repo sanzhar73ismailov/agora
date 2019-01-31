@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.11															##
 ##-------------------------------------------------------------##
-## Copyright ©2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright ï¿½2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -37,10 +37,18 @@ else
 		case 'product_invoice':
 			$invoice_name = GMSG_RECEIPT;
 			
-			$sql_select_products = $db->query("SELECT w.*, a.name, a.apply_tax, a.currency, a.direct_payment, a.payment_methods FROM " . DB_PREFIX . "winners w
-				LEFT JOIN " . DB_PREFIX . "auctions a ON a.auction_id=w.auction_id WHERE w.invoice_id='" . $_REQUEST['invoice_id'] . "' AND
-				(w.seller_id='" . $session->value('user_id') . "' OR w.buyer_id='" . $session->value('user_id') . "')");
-
+// 			$sql_select_products = $db->query("SELECT w.*, a.name, a.apply_tax, a.currency, a.direct_payment, a.payment_methods FROM " . DB_PREFIX . "winners w
+// 				LEFT JOIN " . DB_PREFIX . "auctions a ON a.auction_id=w.auction_id WHERE w.invoice_id='" . $_REQUEST['invoice_id'] . "' AND
+// 				(w.seller_id='" . $session->value('user_id') . "' OR w.buyer_id='" . $session->value('user_id') . "')");
+ // Query modificated by Sanzhar 11.05.2013 (add cat_name for invoice)
+			$sql_select_products = $db->query(
+					"SELECT w.*, a.name, a.apply_tax, a.currency, a.direct_payment, a.payment_methods, c.name as cat_name
+					FROM " . DB_PREFIX . "winners w
+					LEFT JOIN " . DB_PREFIX . "auctions a ON a.auction_id=w.auction_id
+					LEFT JOIN " . DB_PREFIX . "categories c ON c.category_id=a.category_id
+					WHERE w.invoice_id='" . $_REQUEST['invoice_id'] . "' AND
+					(w.seller_id='" . $session->value('user_id') . "' OR w.buyer_id='" . $session->value('user_id') . "')");
+/////////			
 			$single_settings = false;
 			(string) $invoice_content = null;
 			
@@ -65,6 +73,7 @@ else
 						
 						$template->set('invoice_header', '<img src="images/probidlogo.gif" border="0">');
 						$template->set('invoice_comments', $invoice_details['invoice_comments']);
+						$template->set('san_category_product', $invoice_details['cat_name']);
 	
 						$user = new user();
 						$tax = new tax();

@@ -43,6 +43,7 @@ $template->change_path('themes/' . $setts['default_theme'] . '/templates/');
 $template->set('page_meta_tags', $page_meta_tags);
 
 $current_date = date(DATE_FORMAT, time() + (TIME_OFFSET * 3600));
+$current_date = replaceMonthByRus($current_date); // added by Sanzhar 08.05.2013
 $template->set('current_date', $current_date);
 
 if ($setts['user_lang'])

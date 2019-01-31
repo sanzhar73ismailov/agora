@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.10															##
 ##-------------------------------------------------------------##
-## Copyright ©2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright ï¿½2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -23,8 +23,8 @@ $user_id = intval($_REQUEST['user_id']);
 
 $user_details = $db->get_sql_row("SELECT * FROM
 	" . DB_PREFIX . "users WHERE user_id=" . $user_id . " AND enable_profile_page=1");
-
-if (item::count_contents($user_details) && $setts['enable_profile_page'])
+$myitem = new item();
+if ($myitem->count_contents($user_details) && $setts['enable_profile_page'])
 {
 	$template->set('user_id', $user_id);
 	$template->set('auction_id', $_REQUEST['auction_id']);

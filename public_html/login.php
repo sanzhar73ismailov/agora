@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.10															##
 ##-------------------------------------------------------------##
-## Copyright ©2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright ï¿½2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -15,6 +15,7 @@ define ('IN_SITE', 1);
 include_once ('includes/global.php');
 include_once ('includes/class_fees.php');
 include_once ('includes/functions_login.php');
+include_once ('includes/san_settings.php'); // added by sanzhar 290914
 
 if ($session->value('membersarea')=='Active')
 {
@@ -57,6 +58,12 @@ else
 			$header_redirect = (empty($_REQUEST['redirect'])) ? 'members_area.php' : $_REQUEST['redirect'];
 
 			$login_output = login_user($_POST['username'], $_POST['password'], $header_redirect);
+			
+			//did by sanzhar 26.09.2014 for statistics
+			if(IS_TO_INSERT_LOGGED_USERS == 1 && $login_output['active'] == 'Active'){
+			    $vizit_query = sprintf("INSERT INTO vizit_users (username, email) VALUES ('%s', '%s')", $login_output['username'],$login_output['email']);
+				$db->query($vizit_query);
+			}
 
 			$session->set('membersarea', $login_output['active']);
 			$session->set('username', $login_output['username']);

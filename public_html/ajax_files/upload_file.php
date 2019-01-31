@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.10b														##
 ##-------------------------------------------------------------##
-## Copyright ©2010 PHP Pro Software LTD. All rights reserved.	##
+## Copyright ï¿½2010 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -65,7 +65,7 @@ if ($_REQUEST['do'] == 'add')
 	if (empty($_REQUEST['file_embed']))
 	{
 		require_once "../JsHttpRequest/JsHttpRequest.php";
-		$JsHttpRequest = new JsHttpRequest("windows-1251");
+		$JsHttpRequest = new JsHttpRequest(LANG_CODEPAGE);
 	}
 			
 	// we copy the file if there is an upload, we return the hidden id, the hidden content and then we return a media upload box

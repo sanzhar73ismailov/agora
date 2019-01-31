@@ -2,11 +2,13 @@
 #################################################################
 ## PHP Pro Bid v6.10															##
 ##-------------------------------------------------------------##
-## Copyright �2009 PHP Pro Software LTD. All rights reserved.	##
+## Copyright ©2009 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
 if ( !defined('INCLUDED') ) { die("Access Denied"); }
+$myitem = new item();
+$mydatabase = new database();
 ?>
 <?=$auction_print_header;?>
 <SCRIPT LANGUAGE="JavaScript"><!--
@@ -41,20 +43,21 @@ function openPopup(url) {
    </tr>
 </table>
 <? } ?>
+
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
    <tr valign="top">
       <td width="60%"><div class="itemid"><?=$item_details['name'];?></div>
          <div class="itemidend">
             <?=MSG_AUCTION_ID;?>: <b><?=$item_details['auction_id'];?></b>
             <? if ($ad_display == 'live') { ?>
-            &nbsp;&nbsp;|&nbsp;&nbsp;<b><?=MSG_STATUS;?></b>: <?=item::item_status($item_details['closed']); ?>
+            &nbsp;&nbsp;|&nbsp;&nbsp;<b><?=MSG_STATUS;?></b>: <?=$myitem->item_status($item_details['closed']); ?>
             <? } ?>
             <? if ($ad_display == 'live' && $user_details['enable_item_counter']) { ?>
             &nbsp;&nbsp;|&nbsp;&nbsp;<?=MSG_ITEM_VIEWED;?>
             <span class="redfont"><?=($item_details['nb_clicks']+1); ?> <?=GMSG_TIMES;?></span>
             <? } ?>
          </div>
-         <div><img src='themes/<?=$setts['default_theme'];?>"/img/pixel.gif' width='1' height='3'></div>
+         <div><img src='themes/<?=$setts['default_theme'];?>/img/pixel.gif' width='1' height='3'></div>
          <table width="100%" border="0" cellpadding="0" cellspacing="0">
             <tr>
                <? if ($ad_display == 'live') { ?>
@@ -199,7 +202,7 @@ function openPopup(url) {
 											<div class="wraptocenter" id="ad_image"><span></span>
 												<img <? echo ($setts['thumb_display_type'] == 'h') ? 'name="main_ad_image"' : ''; ?> src="thumbnail.php?pic=<?=$ad_image;?>&w=250&sq=Y" border="0" alt="<?=$item_details['name'];?>">
 											</div> 						
-											<? if (item::count_contents($item_details['ad_image']) && $setts['thumb_display_type'] == 'h') { ?>
+											<? if ($myitem->count_contents($item_details['ad_image']) && $setts['thumb_display_type'] == 'h') { ?>
 											<div style="padding-top: 10px; width: 250px;"><?=$ad_image_thumbnails;?></div>
 											<? } ?>	
 					               </td>
@@ -294,7 +297,7 @@ function openPopup(url) {
 			                           {
 			                           	echo '<a href="buy_out.php?auction_id=' . $item_details['auction_id'] . '"><img src="themes/' . $setts['default_theme'] . '/img/buyout.gif" border="0" style="margin-bottom: 5px;"></a>';
 			                           }
-			                           echo '<br><b>for</b> <b class="buyout">' . $fees->display_amount($item_details['buyout_price'], $item_details['currency']) . '</b>'.
+			                           echo '<br><b>за</b> <b class="buyout">' . $fees->display_amount($item_details['buyout_price'], $item_details['currency']) . '</b>'.
 			                           	'<br><span class="contentfont">[ <a href="javascript:void(0);" onClick="converter_open(\'currency_converter.php?currency=' . $item_details['currency'] . '&amount=' . $item_details['buyout_price'] . '\');">' . MSG_CONVERT . '</a> ]</span>';
 												?></td>
 											<? } ?>
@@ -511,11 +514,11 @@ function openPopup(url) {
                         <td colspan="2" class="title"><?=GMSG_DESCRIPTION;?></td>
                      </tr>
                      <tr>
-                        <td colspan="2"><?=database::add_special_chars($item_details['description']);?></td>
+					    <td colspan="2"><?=$mydatabase->add_special_chars($item_details['description']);?></td>
                      </tr>
                   </table>
                   <?=$custom_sections_table;?>
-					   <? if (item::count_contents($item_details['ad_image']) && $setts['thumb_display_type'] == 'v') { ?>
+					   <? if ($myitem->count_contents($item_details['ad_image']) && $setts['thumb_display_type'] == 'v') { ?>
                   <table width="100%" border="0" cellspacing="1" cellpadding="3">
                      <tr>
                         <td class="title" colspan="2"><?=MSG_AUCTION_IMAGES;?></td>
@@ -539,7 +542,7 @@ function openPopup(url) {
                      </tr>
                   </table>
                   <? } ?>
-                  <? if (item::count_contents($item_details['ad_video'])) { ?>
+                  <? if ($myitem->count_contents($item_details['ad_video'])) { ?>
                   <table width="100%" border="0" cellspacing="1" cellpadding="3">
                      <tr>
                         <td class="title" colspan="2"><?=MSG_AUCTION_MEDIA;?></td>
@@ -563,7 +566,7 @@ function openPopup(url) {
                      </tr>
                   </table>
                   <? } ?>
-                  <? if (item::count_contents($item_details['ad_dd'])) { ?>
+                  <? if ($myitem->count_contents($item_details['ad_dd'])) { ?>
                   <table width="100%" border="0" cellspacing="1" cellpadding="3">
                      <tr>
                         <td class="title" colspan="2"><?=MSG_DIGITAL_MEDIA;?></td>

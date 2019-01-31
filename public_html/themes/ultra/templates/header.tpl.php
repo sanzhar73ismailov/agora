@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.10															##
 ##-------------------------------------------------------------##
-## Copyright �2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright ©2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -96,7 +96,7 @@ background: #ffffff url(themes/<?=$setts['default_theme'];?>/img/hour.gif) botto
    <td>
    <table width="100%" border="0" cellpadding="0" cellspacing="0">
       <tr valign="bottom">
-         <td style="padding-bottom: 10px;"><a href="<?=$index_link;?>"><img src="images/probidlogo.gif" alt="Professional Auction Script Software by PHP Pro Bid" border="0"></a></td>
+         <td style="padding-bottom: 10px;"><a href="<?=$index_link;?>"><img src="images/probidlogo.gif" alt="Agora.kz лучшее место для покупок и продаж" border="0"></a></td>
          <td width="100%" valign="bottom" style="padding-left: 15px;"><table width="100%" border="0" cellspacing="0" cellpadding="0">
                <tr height="60">
                   <td nowrap style="border-left: 1px solid #cccccc; padding-left: 15px; padding-top: 8px;" class="mainmenu" width="100%"><div style="padding-bottom: 3px;">
@@ -107,7 +107,7 @@ background: #ffffff url(themes/<?=$setts['default_theme'];?>/img/hour.gif) botto
                      <a href="<?=$login_link;?>"><?=$login_btn_msg;?></a>
                      <? } else { ?>
                      <?=MSG_WELCOME;?>! &nbsp;
-                     <a href="<?=$login_link;?>"><?=$login_btn_msg;?></a> or 
+                     <a href="<?=$login_link;?>"><?=$login_btn_msg;?></a> или 
                      <a href="<?=$register_link;?>"><?=$register_btn_msg;?></a>
                      <? } ?>
                      &nbsp;&nbsp;&nbsp;
@@ -252,6 +252,9 @@ background: #ffffff url(themes/<?=$setts['default_theme'];?>/img/hour.gif) botto
 						      	<li><a href="<?=process_link('members_area', array('page' => 'selling', 'section' => 'vouchers'));?>">
 						      		<?=MSG_MM_SELLER_VOUCHERS;?>
 						      		</a></li>
+						      	<li><a href="<?=process_link('members_area', array('page' => 'selling', 'section' => 'open', 'duplicates' => '1'));?>">
+	                           <?=MSG_MM_POSSIBLE_DUBLICATE_AUCTIONS;?>
+	                           </a></li>
 	                     </ul>
 	                  </li>
 	                  <? } ?>

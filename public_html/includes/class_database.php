@@ -1,6 +1,6 @@
 <?
 #################################################################
-## PHP Pro Bid v6.11															##
+## PHP Pro Bid v6.12															##
 ##-------------------------------------------------------------##
 ## Copyright ©2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
@@ -34,6 +34,7 @@ class db_main
 	function connect($host, $username, $password)
 	{
 		$result = @mysql_connect($host, $username, $password);
+		mysql_set_charset("utf8");
 		
 		if (!$result)
 		{
@@ -377,18 +378,7 @@ class database extends db_main
    
 	function add_special_chars($string, $no_quotes = FALSE)
 	{
-      $patterns = array(
-//          "/(?i)<img.+\.php.+>/",
-          "/(?i)javascript:.+>/",
-          "/(?i)vbscript:.+>/",
-          "/(?i)<img.+onload.+>/",
-          "/(?i)<body.+onload.+>/",
-          "/(?i)<layer.+src.+>/", 
-          "/(?i)<meta.+>/", 
-          "/(?i)<style.+import.+>/",
-          "/(?i)<style.+url.+>/"
-      );
-      
+		$pattern = "/(?i)<img.+\.php/";
       
 		$string = str_ireplace("&amp;","&",$string);
 
@@ -399,40 +389,7 @@ class database extends db_main
 		$string = str_ireplace('&gt;','>',$string);
 		$string = str_ireplace('&nbsp;',' ',$string);
 
-      foreach ($patterns as $pattern)
-      {
-         if(preg_match($pattern, $string))
-         {
-            $string = strip_tags($string);
-         }
-      }      
-		
-      
-      
-      $string = preg_replace('#(&\#*\w+)[\x00-\x20]+;#u', "$1;", $string);
-      $string = preg_replace('#(&\#x*)([0-9A-F]+);*#iu', "$1$2;", $string);
-
-      $string = html_entity_decode($string, ENT_COMPAT, LANG_CODEPAGE);
-
-      $string = preg_replace('#(<[^>]+[\x00-\x20\"\'\/])(on|xmlns)[^>]*>#iUu', "$1>", $string);
-
-      $string = preg_replace('#([a-z]*)[\x00-\x20\/]*=[\x00-\x20\/]*([\`\'\"]*)[\x00-\x20\/]*j[\x00-\x20]*a[\x00-\x20]*v[\x00-\x20]*a[\x00-\x20]*s[\x00-\x20]*c[\x00-\x20]*r[\x00-\x20]*i[\x00-\x20]*p[\x00-\x20]*t[\x00-\x20]*:#iUu', '$1=$2nojavascript...', $string);
-      $string = preg_replace('#([a-z]*)[\x00-\x20\/]*=[\x00-\x20\/]*([\`\'\"]*)[\x00-\x20\/]*v[\x00-\x20]*b[\x00-\x20]*s[\x00-\x20]*c[\x00-\x20]*r[\x00-\x20]*i[\x00-\x20]*p[\x00-\x20]*t[\x00-\x20]*:#iUu', '$1=$2novbscript...', $string);
-      $string = preg_replace('#([a-z]*)[\x00-\x20\/]*=[\x00-\x20\/]*([\`\'\"]*)[\x00-\x20\/]*-moz-binding[\x00-\x20]*:#Uu', '$1=$2nomozbinding...', $string);
-      $string = preg_replace('#([a-z]*)[\x00-\x20\/]*=[\x00-\x20\/]*([\`\'\"]*)[\x00-\x20\/]*data[\x00-\x20]*:#Uu', '$1=$2nodata...', $string);
-
-      $string = preg_replace('#(<[^>]+[\x00-\x20\"\'\/])style[^>]*>#iUu', "$1>", $string);
-
-      $string = preg_replace('#</*\w+:\w[^>]*>#i', "", $string);
-
-      do
-      {
-         $original_string = $string;
-//         $string = preg_replace('#</*(applet|meta|xml|blink|link|style|script|embed|object|iframe|frame|frameset|ilayer|layer|bgsound|title|base)[^>]*>#i', "", $string);
-//         $string = preg_replace('#</*(applet|meta|xml|blink|link|style|embed|object|iframe|frame|frameset|ilayer|layer|bgsound|title|base)[^>]*>#i', "", $string);
-         $string = preg_replace('#</*(applet|meta|xml|blink|link|embed|object|iframe|frame|frameset|ilayer|layer|bgsound|title|base)[^>]*>#i', "", $string);
-      }
-      while ($original_string != $string);   
+		$string = (preg_match($pattern, $string)) ? strip_tags($string, '<br>') : $string;
 
 		return $string;
 	}

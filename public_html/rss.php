@@ -2,22 +2,22 @@
 #################################################################
 ## PHP Pro Bid v6.10															##
 ##-------------------------------------------------------------##
-## Copyright �2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright �2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
 define('RSSlang', 1); // Language English=1, Chinese=2
 define('RSSlogo', 'images/probidlogo.gif'); // logo must be relative to site url
 define('RSSdepth', 10); // number of items to display.
-define('RSStitle1', 'Just Listed');
-define('RSStitle2', 'Closing Soon');
-define('RSStitle3', 'Featured Items');
-define('RSStitle4', 'Big Ticket');
-define('RSStitle5', 'Very Expensive');
-define('RSStitle6', 'Under $10');
-define('RSStitle7', 'Warm Items');
-define('RSStitle8', 'Hot Items');
-define('RSStitle9', 'Buy Now');
+define('RSStitle1', 'Недавно размещенные лоты');
+define('RSStitle2', 'Скоро закрывающиеся лоты');
+define('RSStitle3', 'Приоритетные лоты');
+define('RSStitle4', 'Особо ценные лоты');
+define('RSStitle5', 'Очень дорогие лоты');
+define('RSStitle6', 'Лоты от $10');
+define('RSStitle7', 'Лоты, где ставок больше 10');
+define('RSStitle8', 'Лоты, где ставок больше 25');
+define('RSStitle9', 'Лоты с опцией ВЫКУПИТЬ СЕЙЧАС');
 define('RSS10', 10);     // items $10 and under
 define('RSS300', 300);   // items $300 and more
 define('RSS1000', 1000); // items $1000 and more
@@ -30,8 +30,8 @@ define ('IN_SITE', 1);
 
 include_once ('includes/global.php');
 
-$charset = 'ISO-8859-1';
-$langcode = 'en-us';
+$charset = 'utf-8';
+$langcode = 'ru';
 
 function utf8_convert($string) 
 {

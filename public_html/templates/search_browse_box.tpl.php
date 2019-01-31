@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.10															##
 ##-------------------------------------------------------------##
-## Copyright ©2010 PHP Pro Software LTD. All rights reserved.	##
+## Copyright ï¿½2010 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -48,6 +48,7 @@ if ( !defined('INCLUDED') ) { die("Access Denied"); }
       </tr>
       <tr>
 	      <td align="center">
+	        <?=GMSG_FROM;?>
 	      	<input type="text" name="min_price" id="min_price" size="6" value="<?=$src_details['min_price'];?>" />
 	      	<?=GMSG_TO;?>
 	      	<input type="text" name="max_price" id="max_price" size="6" value="<?=$src_details['max_price'];?>" />

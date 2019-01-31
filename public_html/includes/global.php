@@ -2,13 +2,23 @@
 #################################################################
 ## PHP Pro Bid v6.11															##
 ##-------------------------------------------------------------##
-## Copyright �2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright �2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
 $fileExtension = (file_exists('includes/global.php')) ? '' : '../';
 
 include_once ($fileExtension.'includes/config.php');
+
+/* For Logging  start */
+include_once ($fileExtension . 'a_logger/logger.php'); // logger of sanzhar 04.04.2016
+Logger::$PATH = $fileExtension . "a_logs";// . "\logs";
+define ('TO_LOG', 0); // turn on logging - 1, turn off - 0
+
+/* For Logging  end */
+
+define ('NUMBER_DAYS_FREE_AFTER_REGISTRATION', 30); // количество дней без регистрации (нужно в sell_itemp.php) - 11.04.2016
+
 
 
 define('INCLUDED', 1);
@@ -228,7 +238,7 @@ $custom_pages = array('about_us', 'contact_us', 'terms', 'privacy');
 ## declare all tables that are linkable to custom fields
 $linkable_tables = array('countries');
 
-$limits = array(10, 25, 50, 100);
+$limits = array(10, 25, 50, 200); //modified by Sanzhar on 23.02.14 was: $limits = array(10, 25, 50, 100);
 $item_types = array ('all', 'auctions', 'stores', 'buy_out', 'relisted');
 
 ## load the cron if it is run from the site.

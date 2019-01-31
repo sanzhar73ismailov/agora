@@ -29,6 +29,9 @@ if ( !defined('INCLUDED') ) { die("Access Denied"); }
    <?=$drafts_content;?>
    <? if ($nb_items>0) { ?>
    <tr>
+      <td colspan="8" align="right" class="contentfont"><?=$items_per_page;?></td>
+   </tr>
+   <tr>
       <td colspan="8" align="center" class="contentfont"><?=$pagination;?></td>
    </tr>
 	<? } ?>

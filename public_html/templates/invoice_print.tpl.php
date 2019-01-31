@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.10															##
 ##-------------------------------------------------------------##
-## Copyright ©2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright ï¿½2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -75,7 +75,7 @@ if ( !defined('INCLUDED') ) { die("Access Denied"); }
                      </tr>
                      <tr>
                         <td class="c4"><?=MSG_PRODUCT_TYPE;?></td>
-                        <td class="c1"><?=MSG_DIGITAL_GOODS;?></td>
+                        <td class="c1"><?=$san_category_product;?></td> <? // modificated by Sanzhar 11.05.2013 (add cat_name for invoice) also see invoice_print.php ?>
                      </tr>
                      <tr>
                         <td class="c4"><?=MSG_PAYMENT_TERMS;?></td>

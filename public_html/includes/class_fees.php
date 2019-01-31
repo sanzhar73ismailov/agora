@@ -2,9 +2,10 @@
 #################################################################
 ## PHP Pro Bid v6.11															##
 ##-------------------------------------------------------------##
-## Copyright �2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright �2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
+
 
 class fees extends tax
 {
@@ -83,7 +84,8 @@ class fees extends tax
 			'		<input type="hidden" name="custom" value="' . $transaction_id . '"> '.
 			'		<input type="hidden" name="notify_url" value="' . $this->process_url . '"> ';
 		
-		$this->paypal_user_id = session::value('user_id');
+		$mysession = new session();
+		$this->paypal_user_id = $mysession->value('user_id');
 		
 		if ($this->paypal_user_id)		
 		{
@@ -1037,17 +1039,51 @@ class fees extends tax
 		}
 		else if ($fee_table == 6) ## seller verification fee - alter 'users' table
 		{
+			$log_san_123 = 0; // 1 - включить логирование на экран
+			if($log_san_123) {
+				// выводим все входящие параметры
+				echo("in else if (\$fee_table == 6) callback function that will be used by all payment gateways". "<br>\r\n");
+				echo("\$custom_id=" . $custom_id. "<br>\r\n");
+				echo("\$fee_table=" . $fee_table. "<br>\r\n");
+				echo("\$payment_gateway=" . $payment_gateway. "<br>\r\n");
+				echo("\$payment_amount=" . $payment_amount. "<br>\r\n");
+				echo("\$txn_id=" . $txn_id. "<br>\r\n");
+				echo("\$currency=" . $currency. "<br>\r\n");
+			}
+			
 			$user_details = $this->get_sql_row("SELECT f.*, u.seller_verif_next_payment FROM " . DB_PREFIX . "fees f, " . DB_PREFIX . "users u WHERE 
 				u.user_id='" . $custom_id . "' AND f.category_id=0");
+			
+			if($log_san_123) {
+				print_r($user_details);
+			}
 			
 			$seller_verif_last_payment = ($user_details['seller_verif_next_payment'] < CURRENT_TIME ) ? CURRENT_TIME : $user_details['seller_verif_next_payment'];
 			$seller_verif_next_payment = ($user_details['verification_recurring'] > 0) ? ($seller_verif_last_payment + ($user_details['verification_recurring'] * 24 * 60 * 60)) : 0;
 			$invoice_name = GMSG_SELLER_VERIFICATION_PAYMENT;
 			
+			if($log_san_123) {
+				echo("\$seller_verif_last_payment=". $seller_verif_last_payment ."<br>\r\n");
+				echo("\$seller_verif_next_payment=". $seller_verif_next_payment ."<br>\r\n");
+				echo("\$invoice_name=". $invoice_name ."<br>\r\n");
+				echo("query: UPDATE " . DB_PREFIX . "users SET seller_verified=1, seller_verif_last_payment='" . CURRENT_TIME . "', 
+				seller_verif_next_payment='" . $seller_verif_next_payment . "' WHERE user_id=" . $custom_id."<br>\r\n");
+				//$user_details['verification_recurring']
+				echo("<b>\$user_details['verification_recurring']</b>=". $user_details['verification_recurring'] ."<br>\r\n");
+			}
+			
 			$this->query("UPDATE " . DB_PREFIX . "users SET seller_verified=1, seller_verif_last_payment='" . CURRENT_TIME . "', 
 				seller_verif_next_payment='" . $seller_verif_next_payment . "' WHERE user_id=" . $custom_id);
 
-			$tax_settings = $this->tax_amount($payment_amount, $this->setts['currency'], $custom_id, $this->setts['enable_tax']);			
+			$tax_settings = $this->tax_amount($payment_amount, $this->setts['currency'], $custom_id, $this->setts['enable_tax']);	
+					
+			if($log_san_123) {
+				echo("\$tax_settings=". $tax_settings ."<br>\r\n");
+				echo("qyery=" . ("INSERT INTO " . DB_PREFIX . "invoices
+				(user_id, name, amount, invoice_date, current_balance, live_fee, processor, tax_amount, tax_rate, tax_calculated) VALUES
+				('" . $custom_id . "', '" . $invoice_name . "', '" . $payment_amount . "',
+				'" . CURRENT_TIME . "', '0', '1', '" . $payment_gateway . "', '" . $tax_settings['amount'] . "', '" . $tax_settings['tax_rate'] . "', '1')") . $tax_settings ."<br>\r\n");
+			}
 			
 			$sql_insert_invoice = $this->query("INSERT INTO " . DB_PREFIX . "invoices
 				(user_id, name, amount, invoice_date, current_balance, live_fee, processor, tax_amount, tax_rate, tax_calculated) VALUES
@@ -1055,6 +1091,11 @@ class fees extends tax
 				'" . CURRENT_TIME . "', '0', '1', '" . $payment_gateway . "', '" . $tax_settings['amount'] . "', '" . $tax_settings['tax_rate'] . "', '1')");
 			
 			$user_payment_mode = $this->user_payment_mode($custom_id);
+			
+			if($log_san_123) {
+				echo("\$user_payment_mode=". $user_payment_mode ."<br>\r\n");
+			}
+			
 			if ($user_payment_mode == 2 && $this->setts['seller_verification_refund'])
 			{
 				$this->query("UPDATE " . DB_PREFIX . "users SET balance=balance-" . $payment_amount . " WHERE user_id='" . $custom_id . "'");
@@ -1321,6 +1362,7 @@ class fees extends tax
 			{
 				$output['display_short'] = '(<b>+' . $this->display_amount($output['amount'], $this->setts['currency'], true) . '</b>)';
 			}
+			$output['display_short'] .= ' <font color="red"><b> цена этой услуги</b></font> '; //Added by Sanzhar 190413
 		}
 		else if ($this->setts['display_free_fees'])
 		{
@@ -1531,14 +1573,14 @@ class fees extends tax
 	   			}
 	   		}
    		}
-
-   		$new_images_counter = item::count_contents($item_details['ad_image']);
-   		$new_videos_counter = item::count_contents($item_details['ad_video']);
-   		$new_dd_counter = item::count_contents($item_details['ad_dd']);
+        $myitem = new item(); // заменил на создание объекта
+   		$new_images_counter = $myitem->count_contents($item_details['ad_image']);
+   		$new_videos_counter = $myitem->count_contents($item_details['ad_video']);
+   		$new_dd_counter = $myitem->count_contents($item_details['ad_dd']);
    		
    		$reverse_setup_fee = ($new_category) ? 1 : 0;
-   		$picture_fee = (($this->min_charged_image < $new_images_counter && $new_images_counter > $nb_images && $nb_images <= $this->min_charged_image) || ($new_images_counter > $this->min_charged_image && $new_category)) ? item::count_contents($item_details['ad_image']) : 0;   		   		         
-   		$dd_fee = (($this->min_charged_dd < $new_dd_counter && $new_dd_counter > $nb_dd && $nb_dd <= $this->min_charged_dd) || ($new_dd_counter > $this->min_charged_dd && $new_category)) ? item::count_contents($item_details['ad_dd']) : 0;   		
+   		$picture_fee = (($this->min_charged_image < $new_images_counter && $new_images_counter > $nb_images && $nb_images <= $this->min_charged_image) || ($new_images_counter > $this->min_charged_image && $new_category)) ? $myitem->count_contents($item_details['ad_image']) : 0;   		   		         
+   		$dd_fee = (($this->min_charged_dd < $new_dd_counter && $new_dd_counter > $nb_dd && $nb_dd <= $this->min_charged_dd) || ($new_dd_counter > $this->min_charged_dd && $new_category)) ? $myitem->count_contents($item_details['ad_dd']) : 0;   		
    		$hlitem_fee = ((!$old_item['hl'] || $new_category) && $item_details['hl']) ? 1 : 0;
    		$bolditem_fee = ((!$old_item['bold'] || $new_category) && $item_details['bold']) ? 1 : 0;
    		$hpfeat_fee = ((!$old_item['hpfeat'] || $new_category) && $item_details['hpfeat']) ? 1 : 0;
@@ -1547,7 +1589,7 @@ class fees extends tax
    		$second_cat_fee = ((!$old_item['addl_category_id'] || $new_category) && $item_details['addl_category_id']) ? 1 : 0;
    		$buyout_fee = (($old_item['buyout_price'] == 0 || $new_category) && $item_details['buyout_price'] > 0) ? 1 : 0;
 	   	$custom_start_fee = ($item_details['start_time_type'] == 'custom' && $new_category) ? 1 : 0; ## this is always 0 since if u can choose a custom start time on edit then it means it was already paid for
-			$video_fee = (($this->min_charged_video < $new_videos_counter && $new_videos_counter > $nb_videos && $nb_videos <= $this->min_charged_video)  || ($new_videos_counter > $this->min_charged_video && $new_category)) ? item::count_contents($item_details['ad_video']) : 0;
+			$video_fee = (($this->min_charged_video < $new_videos_counter && $new_videos_counter > $nb_videos && $nb_videos <= $this->min_charged_video)  || ($new_videos_counter > $this->min_charged_video && $new_category)) ? $myitem->count_contents($item_details['ad_video']) : 0;
 			$makeoffer_fee = ((!$old_item['is_offer'] || $new_category) && $item_details['is_offer']) ? 1 : 0;
 			$duration_fee = ((($old_item['duration'] != $item_details['duration']) || $new_category) && $item_details['end_time_type'] == 'duration') ? 1 : 0;
    	}
@@ -1584,9 +1626,11 @@ class fees extends tax
 			}
 			else 
 			{
-				$nb_images = item::count_contents($item_details['ad_image']);
-	   		$nb_videos = item::count_contents($item_details['ad_video']);
-	   		$nb_dd = item::count_contents($item_details['ad_dd']);
+			
+			$myitem = new item(); // заменил на создание объекта
+			$nb_images = $myitem->count_contents($item_details['ad_image']);
+	   		$nb_videos = $myitem->count_contents($item_details['ad_video']);
+	   		$nb_dd = $myitem->count_contents($item_details['ad_dd']);
 			}
 
    		/**
@@ -2293,11 +2337,17 @@ class fees extends tax
 	   		$shop_next_payment = ($shop_details['store_recurring'] > 0) ? ($user_details['shop_last_payment'] + ($shop_details['store_recurring'] * 24 * 60 * 60)) : 0;
 			}
 			
+			/* изменил update (sanzhar 260914), убрал SET shop_active=1. Измененный запрос смотри ниже
 			$this->query("UPDATE " . DB_PREFIX . "users SET 
 				shop_active=1, shop_last_payment='" . $shop_last_payment . "', shop_next_payment='" . $shop_next_payment . "' 
 				WHERE user_id=" . $user_id);
+			*/	
+			$this->query("UPDATE " . DB_PREFIX . "users SET 
+				shop_last_payment='" . $shop_last_payment . "', shop_next_payment='" . $shop_next_payment . "' 
+				WHERE user_id=" . $user_id);
 
 			## if there is no fee we will activate the store
+			// закоментировал update (sanzhar 260914)
 			$sql_update_store = $this->query("UPDATE " . DB_PREFIX . "users SET
 				shop_active=1 WHERE user_id='" . $user_id . "'");
 

@@ -15,7 +15,7 @@ if ( !defined('INCLUDED') ) { die("Access Denied"); }
       </td>
    </tr>
    <tr>
-      <td class="membmenu" align="center"><?=MSG_FROM;?></td>
+      <td class="membmenu" align="center"><?=MSG_FROM_PERSON;?></td>
       <td class="membmenu" align="center"><?=MSG_RATE;?></td>
       <td class="membmenu" align="center"><?=GMSG_DATE;?></td>
       <td class="membmenu"><?=MSG_REVIEW;?></td>

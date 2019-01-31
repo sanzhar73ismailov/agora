@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.11															##
 ##-------------------------------------------------------------##
-## Copyright ©2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright ï¿½2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -286,8 +286,8 @@ class user extends custom_field
 	function show_balance ($balance, $currency)
 	{
 		(string)	$display_output = null;
-
-		$display_output = fees_main::display_amount(abs($balance), $currency, true) . ' ' . (($balance>0) ? GMSG_DEBIT : GMSG_CREDIT);
+        $myfees_main = new fees_main();
+		$display_output = $myfees_main->display_amount(abs($balance), $currency, true) . ' ' . (($balance>0) ? GMSG_DEBIT : GMSG_CREDIT);
 
 		return $display_output;
 	}

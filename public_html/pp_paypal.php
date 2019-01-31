@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.11															##
 ##-------------------------------------------------------------##
-## Copyright ©2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright ï¿½2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -12,6 +12,25 @@ define ('IN_SITE', 1);
 
 include_once ('includes/global.php');
 include_once ('includes/class_fees.php');
+
+include_once ('a_logger/logger.php'); // logger of sanzhar 04.04.2016
+Logger::$PATH = dirname(__FILE__) . "/a_logs";// . "\logs";
+$LOGGER = Logger::getLogger("pp_paypal.php", null, TO_LOG);
+$LOGGER->log("START pp_paypal.php LOGGING");
+
+/* code of Sanzhar start*/
+$custom=104613;
+$fee_table=6;
+$active_pg = 'PayPal';
+$payment_gross=360;
+$txn_id="txn_id_123";
+$payment_currency="KZT";
+$process_fee = new fees();
+$process_fee->setts = &$setts;
+$process_fee->callback_process($custom, $fee_table, $active_pg, $payment_gross, $txn_id, $payment_currency);
+/* code of Sanzhar end */
+
+/*
 
 (string) $active_pg = 'PayPal';
 (string) $error_output = null;
@@ -61,8 +80,11 @@ else
 			$process_fee->setts = &$setts;
 
 			$process_fee->callback_process($custom, $fee_table, $active_pg, $payment_gross, $txn_id, $payment_currency);
+			
 		}
 	}
 	fclose ($fp);
 }
+*/
+
 ?>

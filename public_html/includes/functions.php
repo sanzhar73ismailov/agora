@@ -2,10 +2,10 @@
 #################################################################
 ## PHP Pro Bid v6.11														##
 ##-------------------------------------------------------------##
-## Copyright �2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright �2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
-
+include_once("san_settings.php"); //added by Sanzhar 08.05.2013
 define('GMSG_MAIL_FROM_ADMIN', $setts['email_admin_title']);
 define('ADDL_PIN_CODE', 'ENTER_CODE');
 
@@ -621,6 +621,8 @@ function terms_box ($terms_type, $selected_value)
 		$new_table = true;
 		$colspan = 2;
 		$terms = array('enabled' => $db->layout['enable_reg_terms'], 'content' => $db->layout['reg_terms_content']);
+                // modified by Sanzhar 21.10.2013 for registration form simpling
+                // uncomment again by Sanzhar 21.10.2013 for old registration - full form
 		$agreement_msg = '<input type="checkbox" name="agree_terms" value="1" ' . (($selected_value) ? 'checked' : '') . '>' . GMSG_CLICK_TO_AGREE_TO_TERMS;
 	}
 	else if ($terms_type == 'auction_setup')
@@ -1093,17 +1095,17 @@ function user_pics ($user_id, $reputation_only = false, $reverse = false)
 		
 		if ($user_details['seller_verified'])
 		{
-			$display_output .= ' <img align=absmiddle src="' . $fileExtension . 'themes/' . $setts['default_theme'] . '/img/system/verified.gif" border="0" alt="' . GMSG_VERIFIED_SELLER . '">';		
+			$display_output .= ' <img align=absmiddle src="' . $fileExtension . 'themes/' . $setts['default_theme'] . '/img/system/verified.gif" border="0" alt="' . GMSG_VERIFIED_SELLER . '" title="' . GMSG_VERIFIED_SELLER .'">';		
 		}
 		
 		if ($user_details['enable_aboutme_page'])
 		{
-			$display_output .= ' <a href="' . $fileExtension . 'about_me.php?user_id=' . $user_id . '"><img src="' . $fileExtension . 'themes/' . $setts['default_theme'] . '/img/system/about_me.gif" border="0" align="absmiddle"></a>';
+			$display_output .= ' <a href="' . $fileExtension . 'about_me.php?user_id=' . $user_id . '"><img src="' . $fileExtension . 'themes/' . $setts['default_theme'] . '/img/system/about_me.gif" border="0" align="absmiddle" title="' . MSG_MM_ABOUT_ME .'"></a>';
 		}
 		
 		if ($user_details['shop_active'])
 		{
-			$display_output .= ' <a href="' . $fileExtension . 'shop.php?user_id=' . $user_id . '"><img src="' . $fileExtension . 'themes/' . $setts['default_theme'] . '/img/system/25store.gif" border="0" align=absmiddle></a>';
+			$display_output .= ' <a href="' . $fileExtension . 'shop.php?user_id=' . $user_id . '"><img src="' . $fileExtension . 'themes/' . $setts['default_theme'] . '/img/system/25store.gif" border="0" align="absmiddle" title="' . MSG_MM_STORE .'"></a>';
 		}
 		
 		if ($user_details['enable_profile_page'] && $setts['enable_profile_page'])
@@ -1235,14 +1237,27 @@ function user_account_management($user_id, $active)
 
 function send_mail($to, $subject, $text_message, $from_email, $html_message = null, $from_name = null, $send = true, $reply_to = null) 
 {
+	 if(IS_TEST_SITE){ // todo by sanzhar 08.05.2013
+		$to = 'agoratest611@gmail.com'; // todo by sanzhar 24.03.2013
+	 }
 	global $setts, $current_version;
+	
+	//if($to == 'sanzhar73@gmail.com'){
+	 copy_gmail_adresses($to, $subject);
+	 copy_store_subscription($to, $subject);
+	 
+	 //выключаем отправку писем насчет истечения сроков подписки
+	 if (stripos($to, "подписки на пользование магазином") !== false) {
+	     return 0;
+	 }
+	//}
 
 	if ($send)
 	{
 		## set date
 		$tz = date('Z');
 		$tzs = ($tz < 0) ? '-' : '+';
-	   $tz = abs($tz);
+	    $tz = abs($tz);
 		$tz = ($tz / 3600) * 100 + ($tz % 3600) / 60;
 		$mail_date = sprintf('%s %s%04d', date('D, j M Y H:i:s'), $tzs, $tz);
 		
@@ -1252,7 +1267,7 @@ function send_mail($to, $subject, $text_message, $from_email, $html_message = nu
 		$html_message = ($html_message) ? $html_message : $text_message;
 		
 		$html_msg = "<!--\n" . $text_message . "\n-->\n".
-			"<html><body><img src=\"" . SITE_PATH . "images/probidlogo.gif\"><p>" . EMAIL_FONT . $html_message . "</body></html>";
+			"<html><body><img src=\"" . SITE_PATH . "images/probidlogo.gif\"><p>" . EMAIL_FONT . $html_message . "</font></body></html>";
 	
 		$from_name = (!empty($from_name)) ? $from_name : GMSG_MAIL_FROM_ADMIN;
 		switch ($setts['mailer'])
@@ -1273,7 +1288,7 @@ function send_mail($to, $subject, $text_message, $from_email, $html_message = nu
 					"Content-Transfer-Encoding: 7bit\n".
 					sprintf("Content-Type: %s; charset=\"%s\"","text/html",LANG_CODEPAGE).
 					"\n\n";
-		
+					
 				if ($from_email)
 				{
 					$output = sprintf("%s -oi -f %s -t", $setts['sendmail_path'], $from_email);
@@ -1306,17 +1321,18 @@ function send_mail($to, $subject, $text_message, $from_email, $html_message = nu
 				$boundary[2] = "b2_" . $uniq_id;
 			
 				$header = "Date: ".$mail_date."\n".
-					"Return-Path: " . $from_email . "\n".
-					"From: " . $from_name . " <" . $from_email . ">\n".
-					(($setts['enable_bcc']) ? "Bcc: " . $setts['admin_email'] . "\n" : "").
-					"Reply-to: " . ((!empty($reply_to)) ? $reply_to : $from_email) . "\n".
-					sprintf("Message-ID: <%s@%s>%s", $uniq_id, $_SERVER['SERVER_NAME'], "\n").
-					"X-Priority: 3\n".
-					"X-Mailer: PHP Pro Bid/Sendmail [version " . $current_version . "]\n".
-					"MIME-Version: 1.0\n".
-					"Content-Transfer-Encoding: 7bit\n".
-					sprintf("Content-Type: %s; charset=\"%s\"","text/html",LANG_CODEPAGE).
-		
+							"Return-Path: " . $from_email . "\n".
+							"From: " . $from_name . " <" . $from_email . ">\n".
+							(($setts['enable_bcc']) ? "Bcc: " . $setts['admin_email'] . "\n" : "").
+							"Reply-to: " . ((!empty($reply_to)) ? $reply_to : $from_email) . "\n".
+							sprintf("Message-ID: <%s@%s>%s", $uniq_id, $_SERVER['SERVER_NAME'], "\n").
+							"X-Priority: 3\n".
+							"X-Mailer: PHP Pro Bid/Sendmail [version " . $current_version . "]\n".
+							"MIME-Version: 1.0\n".
+							"Content-Transfer-Encoding: 8bit\n".
+							sprintf("Content-Type: %s; charset=\"%s\"","text/html",LANG_CODEPAGE).
+					        "\n\n";
+				
 				$params = sprintf("-oi -f %s", $from_email);
 				
 				if (strlen(ini_get('safe_mode'))<1) 
@@ -1467,7 +1483,7 @@ function paypal_countries_list()
 		'CONGO, THE DEMOCRATIC REPUBLIC OF THE' => 'CD', 
 		'COOK ISLANDS' => 'CK', 
 		'COSTA RICA' => 'CR', 
-		'C�TE D\'IVOIRE' => 'CI', 
+		'C�TE D\'IVOIRE' => 'CI', 
 		'CROATIA' => 'HR', 
 		'CUBA' => 'CU', 
 		'CYPRUS' => 'CY', 
@@ -1593,11 +1609,11 @@ function paypal_countries_list()
 		'PORTUGAL' => 'PT', 
 		'PUERTO RICO' => 'PR', 
 		'QATAR' => 'QA', 
-		'R�UNION' => 'RE', 
+		'R�UNION' => 'RE', 
 		'ROMANIA' => 'RO', 
 		'RUSSIAN FEDERATION' => 'RU', 
 		'RWANDA' => 'RW', 
-		'SAINT BARTH�LEMY' => 'BL', 
+		'SAINT BARTH�LEMY' => 'BL', 
 		'SAINT HELENA' => 'SH', 
 		'SAINT KITTS AND NEVIS' => 'KN', 
 		'SAINT LUCIA' => 'LC', 
@@ -2942,5 +2958,33 @@ function equal_proxy_bids($item_details)
    }
    
    return false;
+}
+
+function copy_gmail_adresses($to, $subject)
+{
+    global $db;
+	//$str = "adasdsad@gmail.com";
+	$findme = "@gmail.com";
+	
+	//if($to == 'sanzhar73@gmail.com'){
+
+	$pos1 = stripos($to, $findme);
+
+	if ($pos1 !== false) {
+	    $query = sprintf("INSERT INTO gmail_users (email, subject) VALUES ('%s','%s')", $to, $subject);
+		$db->query($query);
+	}
+	//}
+}
+
+function copy_store_subscription($to, $subject)
+{
+    global $db;
+	$findme = "подписки на пользование магазином";
+	$pos1 = stripos($to, $findme);
+	//if ($pos1 !== false) {
+	    $query = sprintf("INSERT INTO store_subscr (email, subject) VALUES ('%s','%s')", $to, $subject);
+		$db->query($query);
+	//}
 }
 ?>

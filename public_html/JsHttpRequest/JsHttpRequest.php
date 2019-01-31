@@ -10,7 +10,7 @@
  * See http://www.gnu.org/copyleft/lesser.html
  *
  * Do not remove this comment if you want to use the script!
- * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
+ * пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ!
  *
  * This backend library also supports POST requests additionally to GET.
  *
@@ -187,12 +187,12 @@ class JsHttpRequest
         $result = array();
         if ($isList) {
             foreach ($a as $v) {
-                $result[] = JsHttpRequest::php2js($v);
+                $result[] = $this->php2js($v);
             }
             return '[ ' . join(', ', $result) . ' ]';
         } else {
             foreach ($a as $k => $v) {
-                $result[] = JsHttpRequest::php2js($k) . ': ' . JsHttpRequest::php2js($v);
+                $result[] = $this->php2js($k) . ': ' . $this->php2js($v);
             }
             return '{ ' . join(', ', $result) . ' }';
         }

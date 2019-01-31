@@ -2,7 +2,7 @@
 #################################################################
 ## PHP Pro Bid v6.11															##
 ##-------------------------------------------------------------##
-## Copyright �2007 PHP Pro Software LTD. All rights reserved.	##
+## Copyright �2007 PHP Pro Software LTD. All rights reserved.	##
 ##-------------------------------------------------------------##
 #################################################################
 
@@ -48,14 +48,15 @@ if ( !defined('INCLUDED') ) { die("Access Denied"); }
             <? } ?>
             <?=$custom_pages_links;?>
 			</div>
-         <div align="center" class="footerfont1"> Copyright &copy;2009 <b><a href="http://www.phpprobid.com/" target="_blank">PHP Pro Software LTD</a></b>. 
-            All Rights Reserved. Designated trademarks and brands are the property of their respective owners.<br>
-            Use of this Web site constitutes acceptance of the <b>
-            <?=$setts['sitename'];?>
-            </b>
-            <? if ($layout['is_terms']) { ?>
+         <div align="center" class="footerfont1"> <b><a href="http://agora.kz/" target="_blank">Agora.kz </a></b>. 
+             <?=date('Y') ?>. Все права защищены. Пользование данным сайтом подразумевает, <br> что вы принимаете 
+              <? if ($layout['is_terms']) { ?>
             <a href="<?=process_link('content_pages', array('page' => 'terms'));?>"><?=MSG_BTN_TERMS;?></a>
             <? } ?>
+            <b> 
+            <?=$setts['sitename'];?>
+            </b>
+           
             <? if ($layout['is_pp']) { ?> 
             and <a href="<?=process_link('content_pages', array('page' => 'privacy'));?>"><?=MSG_BTN_PRIVACY;?></a>
             <? } ?>         
